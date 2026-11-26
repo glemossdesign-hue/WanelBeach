@@ -2,7 +2,8 @@
 
 /* ===== QUADRAS =====
    Para adicionar uma quadra, inclua um item nesta lista. Exemplo:
-   { nome: 'Quadra 1', modalidades: ['Vôlei de Praia', 'Futevôlei'], info: 'Texto', imagem: 'assets/images/quadra1.jpg' }
+   { nome: 'Quadra 1', modalidades: ['Vôlei de Praia', 'Futevôlei'], info: 'Texto', imagem: 'quadra-1.jpg' }  (a foto fica em assets/images/quadras/)
+   Pode ter qualquer quantidade de itens: os cards e o seletor da reserva se ajustam sozinhos.
    A lista está vazia de propósito: a quantidade real de quadras ainda não foi informada. */
 const COURTS = [];
 
@@ -30,7 +31,7 @@ function renderCourts() {
   }
   grid.innerHTML = COURTS.map((c) => `
     <article class="card reveal in">
-      <div class="ph ph-sand card-img" ${c.imagem ? `style="background-image:url('${esc(c.imagem)}')"` : ''}></div>
+      <div class="photo card-img" data-ph="Foto da quadra em breve" ${c.imagem ? `data-src="assets/images/quadras/${esc(c.imagem)}"` : ''}></div>
       <div class="card-body">
         <h3>${esc(c.nome)}</h3>
         <div class="tags">${(c.modalidades || []).map((m) => `<span>${esc(m)}</span>`).join('')}</div>
@@ -77,5 +78,37 @@ const io = new IntersectionObserver((entries) => entries.forEach((en) => {
   if (en.isIntersecting) { en.target.classList.add('in'); io.unobserve(en.target); }
 }), { threshold: 0.12 });
 document.querySelectorAll('.reveal').forEach((el) => io.observe(el));
+
+/* ===== FOTOS REAIS =====
+   Coloque os arquivos nas pastas de assets/images (veja assets/images/LEIA-ME.txt), em .jpg ou .webp.
+   Sem arquivo, o espaço reservado elegante continua visível. */
+const IMG_BASE = 'assets/images/';
+const IMAGES = {
+  hero: 'hero/hero', espaco: 'espaco/espaco',
+  voleiDePraia: 'modalidades/volei-de-praia', futevolei: 'modalidades/futevolei',
+  mosaico1: 'experiencia/jogos', mosaico2: 'experiencia/estrutura', mosaico3: 'experiencia/amigos',
+  mosaico4: 'experiencia/ambiente', mosaico5: 'experiencia/eventos',
+  instagram1: 'instagram/post-1', instagram2: 'instagram/post-2', instagram3: 'instagram/post-3',
+  instagram4: 'instagram/post-4', instagram5: 'instagram/post-5', instagram6: 'instagram/post-6'
+};
+const EXTS = ['jpg', 'webp'];
+function updateNotes() {
+  document.querySelectorAll('[data-pending]').forEach((n) => {
+    n.hidden = !n.closest('section').querySelector('.photo:not(.has-photo)');
+  });
+}
+function loadPhoto(el) {
+  if (!el.dataset.ph) el.dataset.ph = 'Foto em breve';
+  const list = el.dataset.src ? [el.dataset.src]
+    : IMAGES[el.dataset.img] ? EXTS.map((x) => `${IMG_BASE}${IMAGES[el.dataset.img]}.${x}`) : [];
+  (function next(i) {
+    if (i >= list.length) return;
+    const img = new Image();
+    img.onload = () => { el.style.backgroundImage = `url("${img.src}")`; el.classList.add('has-photo'); updateNotes(); };
+    img.onerror = () => next(i + 1);
+    img.src = list[i];
+  })(0);
+}
+document.querySelectorAll('.photo').forEach(loadPhoto);
 
 $('#year').textContent = new Date().getFullYear();

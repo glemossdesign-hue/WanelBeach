@@ -9,13 +9,12 @@ h2{font-size:clamp(1.9rem,4vw,3rem);color:var(--navy)}
 section{padding:90px 6vw}
 .head{max-width:1200px;margin:0 auto 40px}
 
-/* imagens provisórias (gradientes) */
-.ph{position:relative;background-size:cover;background-position:center}
-.ph-hero{background:linear-gradient(180deg,#5aa6d8 0%,#a9d3ea 45%,#e8cf9f 62%,#d9b878 100%)}
-.ph-sky{background:linear-gradient(180deg,#4f97cf,#9ccbe6 55%,#e1c48d)}
-.ph-sand{background:linear-gradient(160deg,#f2e5c9,#dcc08a 70%,#c9a566)}
-.ph-sunset{background:linear-gradient(180deg,#e2793a,#f0b36a 50%,#e3c58f)}
-.ph-note{position:absolute;right:14px;bottom:14px;font-size:.7rem;background:rgba(0,0,0,.45);color:#fff;padding:4px 10px;border-radius:99px}
+/* fotos reais e espaços reservados (placeholders) */
+.photo{position:relative;background-color:#12395f;background-image:repeating-linear-gradient(45deg,rgba(255,255,255,.045) 0 2px,transparent 2px 16px),linear-gradient(145deg,#1b4d82,#0b2a4a);background-size:cover;background-position:center}
+.photo::after{content:attr(data-ph);position:absolute;inset:14px;display:flex;align-items:center;justify-content:center;text-align:center;padding:10px;border:1px solid rgba(217,164,65,.45);border-radius:calc(var(--r) - 8px);color:rgba(255,255,255,.78);font:500 .78rem var(--sans);letter-spacing:.16em;text-transform:uppercase;pointer-events:none}
+.photo.has-photo::after{display:none}
+.hero.photo::after{inset:auto 6vw 24px auto;border:0;padding:0;color:rgba(255,255,255,.6);font-size:.7rem}
+.insta-grid .photo::after,.mosaic .photo::after{font-size:.66rem;inset:10px}
 
 /* botões */
 .btn{display:inline-block;border:0;cursor:pointer;font:600 .92rem var(--sans);padding:13px 26px;border-radius:99px;transition:transform .25s,box-shadow .25s,background .25s}
