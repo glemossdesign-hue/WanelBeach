@@ -54,10 +54,14 @@
     <label>Data
       <input type="date" id="fDate" required>
     </label>
-    <label>Horário
-      <select id="fTime" required><option value="">Escolha</option></select>
-    </label>
-    <button type="submit" class="btn btn-blue">Consultar disponibilidade</button>
+    <div class="chips-wrap">
+      <span class="lbl">Horários (escolha uma ou mais horas)</span>
+      <div class="chips" id="fTimes" role="group" aria-label="Horários"></div>
+    </div>
+    <div class="book-foot">
+      <p class="sum" id="sumTxt" aria-live="polite"></p>
+      <button type="submit" class="btn btn-blue">Consultar disponibilidade</button>
+    </div>
     <p class="form-msg" id="formMsg" role="status" aria-live="polite"></p>
   </form>
 </section>

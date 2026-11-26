@@ -4,8 +4,16 @@
    Para adicionar uma quadra, inclua um item nesta lista. Exemplo:
    { nome: 'Quadra 1', modalidades: ['Vôlei de Praia', 'Futevôlei'], info: 'Texto', imagem: 'quadra-1.jpg' }  (a foto fica em assets/images/quadras/)
    Pode ter qualquer quantidade de itens: os cards e o seletor da reserva se ajustam sozinhos.
-   A lista está vazia de propósito: a quantidade real de quadras ainda não foi informada. */
-const COURTS = [];
+   Hoje são 5 quadras (informado pelo Wanel Beach). Os nomes "Quadra 1" a "Quadra 5" são provisórios e as modalidades de cada uma ainda não foram informadas. */
+const PRICE_PER_HOUR = 90; // informado pelo Wanel Beach
+const brl = (v) => v.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+const COURTS = [
+  { nome: 'Quadra 1', info: `${brl(PRICE_PER_HOUR)} por hora` },
+  { nome: 'Quadra 2', info: `${brl(PRICE_PER_HOUR)} por hora` },
+  { nome: 'Quadra 3', info: `${brl(PRICE_PER_HOUR)} por hora` },
+  { nome: 'Quadra 4', info: `${brl(PRICE_PER_HOUR)} por hora` },
+  { nome: 'Quadra 5', info: `${brl(PRICE_PER_HOUR)} por hora` }
+];
 
 const $ = (s) => document.querySelector(s);
 const esc = (t) => String(t).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
@@ -43,8 +51,28 @@ function renderCourts() {
 }
 renderCourts();
 
-/* Horários demonstrativos (serão substituídos pelos reais via Supabase) */
-$('#fTime').innerHTML += Array.from({ length: 14 }, (_, i) => `<option>${String(i + 8).padStart(2, '0')}:00</option>`).join('');
+/* Horários demonstrativos (serão substituídos pelos reais via Supabase). Várias horas podem ser escolhidas e o valor soma. */
+const picked = new Set();
+const chips = $('#fTimes'), sum = $('#sumTxt');
+chips.innerHTML = Array.from({ length: 14 }, (_, i) => {
+  const t = `${String(i + 8).padStart(2, '0')}:00`;
+  return `<button type="button" class="chip" aria-pressed="false" data-t="${t}">${t}</button>`;
+}).join('');
+function updateSum() {
+  const n = picked.size;
+  sum.textContent = n ? `${n} ${n > 1 ? 'horas' : 'hora'} × ${brl(PRICE_PER_HOUR)} = ${brl(n * PRICE_PER_HOUR)}` : `${brl(PRICE_PER_HOUR)} por hora. Escolha uma ou mais horas.`;
+}
+chips.addEventListener('click', (e) => {
+  const b = e.target.closest('.chip');
+  if (!b) return;
+  const on = !picked.has(b.dataset.t);
+  if (on) picked.add(b.dataset.t); else picked.delete(b.dataset.t);
+  b.setAttribute('aria-pressed', on);
+  b.classList.toggle('on', on);
+  chips.classList.remove('err');
+  updateSum();
+});
+updateSum();
 
 /* Data mínima = hoje */
 const today = new Date(); today.setMinutes(today.getMinutes() - today.getTimezoneOffset());
@@ -63,13 +91,14 @@ document.addEventListener('click', (e) => {
 $('#bookingForm').addEventListener('submit', (e) => {
   e.preventDefault();
   const msg = $('#formMsg');
-  const fields = ['#fSport', '#fCourt', '#fDate', '#fTime'].map($);
+  const fields = ['#fSport', '#fCourt', '#fDate'].map($);
   fields.forEach((f) => f.classList.toggle('err', !f.value));
-  if (fields.some((f) => !f.value)) {
-    msg.textContent = COURTS.length ? 'Preencha todos os campos para consultar.' : 'Preencha os campos. A escolha de quadra ficará disponível quando as quadras forem cadastradas.';
+  chips.classList.toggle('err', !picked.size);
+  if (fields.some((f) => !f.value) || !picked.size) {
+    msg.textContent = 'Preencha modalidade, quadra, data e escolha ao menos um horário.';
     return;
   }
-  msg.textContent = 'Demonstração: a consulta real de disponibilidade será ativada na integração com o Supabase. Nenhuma reserva foi feita.';
+  msg.textContent = `Demonstração: ${picked.size} ${picked.size > 1 ? 'horas' : 'hora'}, total de ${brl(picked.size * PRICE_PER_HOUR)}. A consulta real de disponibilidade será ativada na integração com o Supabase. Nenhuma reserva foi feita.`;
 });
 document.querySelectorAll('#bookingForm select,#bookingForm input').forEach((f) => f.addEventListener('change', () => f.classList.remove('err')));
 
