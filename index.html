@@ -5,8 +5,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Wanel Beach | Esportes na areia em Sorocaba</title>
 <meta name="description" content="Wanel Beach: vôlei de praia e futevôlei em Sorocaba - SP. Reserve sua quadra.">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Playfair+Display:wght@500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -20,6 +18,7 @@
     <a href="#modalidades">Modalidades</a>
     <a href="#quadras">Quadras</a>
     <a href="#localizacao">Localização</a>
+    <button class="nav-link" id="authBtn" hidden>Entrar</button>
     <a href="#reserva" class="btn btn-gold">Reservar quadra</a>
   </nav>
 </header>
@@ -44,7 +43,8 @@
     <label>Modalidade
       <select id="fSport" required>
         <option value="">Escolha</option>
-        <option>Vôlei de Praia</option>
+        <option>Vôlei de Areia</option>
+        <option>Beach Tênis</option>
         <option>Futevôlei</option>
       </select>
     </label>
@@ -80,11 +80,19 @@
   <div class="head reveal"><p class="eyebrow dark">MODALIDADES</p><h2>Escolha seu jogo</h2></div>
   <div class="grid-2">
     <article class="card reveal">
-      <div class="photo card-img" data-img="voleiDePraia" data-ph="Foto de vôlei de praia em breve"></div>
+      <div class="photo card-img" data-img="voleiDeAreia" data-ph="Foto de vôlei de areia em breve"></div>
       <div class="card-body">
-        <h3>Vôlei de Praia</h3>
+        <h3>Vôlei de Areia</h3>
         <p>Jogos em dupla ou em grupo, na areia, para todos os níveis.</p>
-        <button class="btn btn-blue" data-sport="Vôlei de Praia">Agendar horário</button>
+        <button class="btn btn-blue" data-sport="Vôlei de Areia">Agendar horário</button>
+      </div>
+    </article>
+    <article class="card reveal">
+      <div class="photo card-img" data-img="beachTenis" data-ph="Foto de beach tênis em breve"></div>
+      <div class="card-body">
+        <h3>Beach Tênis</h3>
+        <p>Raquete, bola e areia: o esporte do momento em um ambiente preparado.</p>
+        <button class="btn btn-blue" data-sport="Beach Tênis">Agendar horário</button>
       </div>
     </article>
     <article class="card reveal">
@@ -121,6 +129,7 @@
     <h2>Wanel Beach</h2>
     <address>Av. Elias Maluf, 3170 - Jardim Wanel Ville V,<br>Sorocaba - SP, 18055-215</address>
     <p><a class="link" href="tel:+5515991963030">Telefone: (15) 99196-3030</a></p>
+    <div class="hours"><h3>Horário de funcionamento</h3><ul id="hoursList"></ul></div>
     <a class="btn btn-blue" target="_blank" rel="noopener" href="https://www.google.com/maps/dir/?api=1&destination=Av.+Elias+Maluf,+3170+-+Jardim+Wanel+Ville+V,+Sorocaba+-+SP,+18055-215">Como chegar</a>
   </div>
   <iframe class="map" title="Mapa do Wanel Beach" loading="lazy" referrerpolicy="no-referrer-when-downgrade"
@@ -154,10 +163,33 @@
   <p class="copy"><a href="#privacidade">Política de privacidade</a> &nbsp;·&nbsp; © <span id="year">2026</span> Wanel Beach. Todos os direitos reservados.</p>
 </footer>
 
+<dialog id="authDlg" aria-labelledby="authTitle">
+  <button class="x" id="authClose" aria-label="Fechar">×</button>
+  <div id="authOut">
+    <h3 id="authTitle">Entrar</h3>
+    <div class="tabs" id="authTabs"><button type="button" data-mode="login" class="on">Entrar</button><button type="button" data-mode="signup">Criar conta</button></div>
+    <form id="authForm" novalidate>
+      <input id="aName" placeholder="Nome completo" autocomplete="name" hidden>
+      <input id="aPhone" placeholder="Telefone (WhatsApp)" autocomplete="tel" inputmode="tel" hidden>
+      <input id="aEmail" type="email" placeholder="E-mail" autocomplete="email">
+      <input id="aPass" type="password" placeholder="Senha (mínimo 8 caracteres)" autocomplete="current-password">
+      <button class="btn btn-blue" type="submit" id="aSubmit">Entrar</button>
+      <button type="button" class="linkbtn" id="aForgot">Esqueci minha senha</button>
+    </form>
+  </div>
+  <div id="authIn" hidden>
+    <h3>Minhas reservas</h3>
+    <ul class="mybook" id="myList"></ul>
+    <button class="btn btn-soft" id="logoutBtn" type="button">Sair da conta</button>
+  </div>
+  <p id="authMsg" role="status" aria-live="polite"></p>
+</dialog>
+
 <a class="wa" target="_blank" rel="noopener" href="https://wa.me/5515991963030" aria-label="Falar no WhatsApp">
   <svg viewBox="0 0 24 24" width="26" height="26" fill="#fff" aria-hidden="true"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2zm5.2 14.2c-.2.6-1.300 1.200-1.800 1.200-.5.100-1 .2-3.300-.7-2.800-1.200-4.600-4-4.700-4.200-.1-.2-1.100-1.500-1.100-2.800s.7-2 1-2.300c.2-.3.500-.3.700-.3h.5c.2 0 .4 0 .6.500l.8 2c.1.100.1.300 0 .5l-.4.600-.4.400c-.1.100-.3.300-.1.600.2.300.8 1.300 1.700 2.100 1.200 1 2.100 1.300 2.400 1.500.3.100.5.100.6-.1l.9-1.100c.2-.3.400-.2.600-.1l1.900.9c.3.100.5.200.5.300.1.100.1.600-.1 1.200z"/></svg>
 </a>
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
 <script src="script.js"></script>
 </body>
 </html>
